@@ -1,10 +1,13 @@
-import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useContext, useEffect, useState } from "react";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import Login from "../pages/Login";
 import axios from "axios";
+import { UserContext } from "../UserContext";
+
 const Header = () => {
-  const [user, setUser] = useState(null);
+  const { userInfo, setUserInfo } = useContext(UserContext);
   const navigate = useNavigate();
+  const location = useLocation();
   const getUser = async () => {
     try {
       const res = await axios.get("http://localhost:4000/profile", {
@@ -12,7 +15,7 @@ const Header = () => {
       });
       console.log(res);
       if (res.data.username !== "") {
-        setUser(res.data.username);
+        setUserInfo(res?.data?.username);
       }
     } catch (err) {
       console.log(err);
@@ -29,7 +32,7 @@ const Header = () => {
         withCredentials: true,
       });
       if (res.status === 200) {
-        setUser(null);
+        setUserInfo(null);
         navigate("/login");
       } else {
         console.error(`Unexpected status code: ${res.status}`);
@@ -45,14 +48,14 @@ const Header = () => {
         TechTonic
       </Link>
       <div className="flex gap-4">
-        {user && (
+        {userInfo && (
           <>
             <Link to="/create">Create new post</Link>
             <Link onClick={handleLogout}>Logout</Link>
           </>
         )}
 
-        {!user && (
+        {!userInfo && (
           <>
             <Link to="/login" className="cursor-pointer">
               Login

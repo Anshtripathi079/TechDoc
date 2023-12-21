@@ -1,12 +1,14 @@
 import axios from "axios";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import toast from "react-hot-toast";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import { UserContext } from "../UserContext";
 const Login = () => {
   const [password, setPassword] = useState("");
   const [username, setUserName] = useState("");
   const navigate = useNavigate();
+  const { setUserInfo } = useContext(UserContext);
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -22,6 +24,7 @@ const Login = () => {
         console.log(res);
         console.log("Logged in");
         toast.success("logged in successfully");
+        setUserInfo(res?.data);
         navigate("/");
       }
     } catch (err) {
