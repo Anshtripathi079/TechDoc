@@ -1,10 +1,33 @@
+import axios from "axios";
 import React, { useState } from "react";
+import toast from "react-hot-toast";
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 const Login = () => {
   const [password, setPassword] = useState("");
   const [username, setUserName] = useState("");
+  const navigate = useNavigate();
   const handleSubmit = async (e) => {
     e.preventDefault();
+    try {
+      const res = await axios.post(
+        "http://localhost:4000/login",
+        {
+          username,
+          password,
+        },
+        { withCredentials: true }
+      );
+      if (res.status == 200) {
+        console.log(res);
+        console.log("Logged in");
+        toast.success("logged in successfully");
+        navigate("/");
+      }
+    } catch (err) {
+      toast.error("wrong credentials");
+      console.log(err);
+    }
   };
   return (
     <div className="w-96 m-auto mt-48 shadow-lg rounded-lg p-10">

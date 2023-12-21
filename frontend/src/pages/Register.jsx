@@ -1,26 +1,29 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Toaster, toast } from "react-hot-toast";
+import axios from "axios";
 const Register = () => {
   const [username, setUserName] = useState("");
   const [password, setPassword] = useState("");
   const handleSubmit = async (e) => {
     console.log(username);
     e.preventDefault();
-    toast.success("Submit");
+
     if (!username || !password) {
       toast.error("Fill all the fields");
       return;
     }
-    const response = await fetch("http://localhost:4000/register", {
-      method: "POST",
-      body: JSON.stringify({ username, password }),
-      headers: { "Content-Type": "application/json" },
-    });
-    console.log(response);
-    if (response.status === 200) {
-      toast.success("registration successful");
-    } else {
+    try {
+      const response = await axios.post("http://localhost:4000/register", {
+        username: username,
+        password: password,
+      });
+      console.log(response);
+      if (response.status === 200) {
+        toast.success("registration successful");
+      }
+    } catch (err) {
+      console.log(err);
       toast.error("registration failed");
     }
   };
