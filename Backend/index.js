@@ -5,12 +5,23 @@ const UserModel = require("./models/User");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
+const multer = require("multer");
+const fs = require("fs");
+const Post = require("./models/Post");
+const uploadMiddleware = multer({ dest: "uploads/" });
+
 const app = express();
 
 require("dotenv").config();
 const salt = bcrypt.genSaltSync(10);
 const secret = bcrypt.genSaltSync(10);
-app.use(cors({ credentials: true, origin: "http://localhost:5174" }));
+app.use(
+  cors({
+    credentials: true,
+    origin: "http://localhost:5173",
+    // origin: "http://localhost:5174",
+  })
+);
 app.use(express.json());
 app.use(cookieParser());
 mongoose.connect(process.env.CONN);
@@ -69,6 +80,22 @@ app.get("/profile", async (req, res) => {
 
 app.post("/logout", (req, res) => {
   res.cookie("token", "").json("ok");
+});
+
+app.post("/createpost", uploadMiddleware.single("file"), async (req, res) => {
+  const { originalname, path } = req.file;
+  const parts = originalname.split(".");
+  const ext = parts[parts.length - 1];
+  const newpath = path + "." + ext;
+  fs.renameSync(path, newpath);
+  const { title, summary, content } = req.body;
+  const postDoc = await Post.create({
+    title,
+    content,
+    summary,
+    cover: newpath,
+  });
+  res.json(postDoc);
 });
 
 app.get("/", (req, res) => {
