@@ -7,6 +7,7 @@ import Layout from "./pages/Layout";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import CreatePost from "./pages/CreatePost";
+import SinglePost from "./pages/SinglePost";
 const App = () => {
   return (
     <BrowserRouter>
@@ -16,6 +17,7 @@ const App = () => {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/create" element={<CreatePost />} />
+          <Route path="/post/:id" element={<SinglePost />} />
         </Route>
       </Routes>
     </BrowserRouter>
